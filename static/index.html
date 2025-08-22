@@ -1,0 +1,159 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Accounting Management System</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/feather-icons"></script>
+    <script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-50">
+    <div id="app">
+        <!-- Login Screen -->
+        <div id="loginScreen" class="min-h-screen flex items-center justify-center">
+            <div class="max-w-md w-full space-y-8">
+                <div>
+                    <h2 class="mt-6 text-center text-3xl font-extrabold text-gray-900">
+                        Accounting Management System
+                    </h2>
+                    <p class="mt-2 text-center text-sm text-gray-600">
+                        Sign in to your account
+                    </p>
+                </div>
+                <form class="mt-8 space-y-6" id="loginForm">
+                    <div>
+                        <label for="username" class="block text-sm font-medium text-gray-700">Username</label>
+                        <input id="username" name="username" type="text" required 
+                               class="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="Enter username" value="admin">
+                    </div>
+                    <div>
+                        <label for="password" class="block text-sm font-medium text-gray-700">Password</label>
+                        <input id="password" name="password" type="password" required 
+                               class="mt-1 appearance-none rounded-md relative block w-full px-3 py-2 border border-gray-300 placeholder-gray-500 text-gray-900 focus:outline-none focus:ring-blue-500 focus:border-blue-500" 
+                               placeholder="Enter password" value="admin123">
+                    </div>
+                    <div>
+                        <button type="submit" 
+                                class="group relative w-full flex justify-center py-2 px-4 border border-transparent text-sm font-medium rounded-md text-white bg-blue-600 hover:bg-blue-700 focus:outline-none focus:ring-2 focus:ring-offset-2 focus:ring-blue-500">
+                            Sign in
+                        </button>
+                    </div>
+                    <div id="loginError" class="hidden text-red-600 text-sm text-center"></div>
+                </form>
+            </div>
+        </div>
+
+        <!-- Main Application -->
+        <div id="mainApp" class="hidden">
+            <!-- Navigation -->
+            <nav class="bg-white shadow-sm border-b border-gray-200">
+                <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+                    <div class="flex justify-between h-16">
+                        <div class="flex">
+                            <div class="flex-shrink-0 flex items-center">
+                                <h1 class="text-xl font-bold text-gray-900">AMS</h1>
+                            </div>
+                            <div class="ml-6 flex space-x-8">
+                                <a href="#" id="dashboardTab" class="nav-tab border-blue-500 text-gray-900 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    <i data-feather="home" class="w-4 h-4 mr-2"></i>Dashboard
+                                </a>
+                                <a href="#" id="inventoryTab" class="nav-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    <i data-feather="package" class="w-4 h-4 mr-2"></i>Inventory
+                                </a>
+                                <a href="#" id="salesTab" class="nav-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    <i data-feather="shopping-cart" class="w-4 h-4 mr-2"></i>Sales
+                                </a>
+                                <a href="#" id="purchasesTab" class="nav-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    <i data-feather="truck" class="w-4 h-4 mr-2"></i>Purchases
+                                </a>
+                                <a href="#" id="payrollTab" class="nav-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    <i data-feather="users" class="w-4 h-4 mr-2"></i>Payroll
+                                </a>
+                                <a href="#" id="reportsTab" class="nav-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium">
+                                    <i data-feather="bar-chart-2" class="w-4 h-4 mr-2"></i>Reports
+                                </a>
+                                <a href="#" id="usersTab" class="nav-tab border-transparent text-gray-500 hover:text-gray-700 hover:border-gray-300 inline-flex items-center px-1 pt-1 border-b-2 text-sm font-medium user-management-tab">
+                                    <i data-feather="user" class="w-4 h-4 mr-2"></i>Users
+                                </a>
+                            </div>
+                        </div>
+                        <div class="flex items-center">
+                            <span class="text-sm text-gray-700 mr-4" id="userInfo"></span>
+                            <button id="logoutBtn" class="text-gray-500 hover:text-gray-700">
+                                <i data-feather="log-out" class="w-5 h-5"></i>
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </nav>
+
+            <!-- Content Area -->
+            <main class="max-w-7xl mx-auto py-6 sm:px-6 lg:px-8">
+                <!-- Dashboard -->
+                <div id="dashboardContent" class="tab-content">
+                    <div class="px-4 py-6 sm:px-0">
+                        <h2 class="text-2xl font-bold text-gray-900 mb-6">Dashboard</h2>
+                        
+                        <!-- Stats Cards -->
+                        <div class="grid grid-cols-1 gap-5 sm:grid-cols-2 lg:grid-cols-4 mb-8" id="dashboardStats">
+                            <!-- Stats will be populated by JavaScript -->
+                        </div>
+
+                        <!-- Quick Actions -->
+                        <div class="bg-white shadow rounded-lg p-6 mb-8">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Quick Actions</h3>
+                            <div class="grid grid-cols-1 gap-4 sm:grid-cols-2 lg:grid-cols-4">
+                                <button id="quickAddInventory" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-blue-700 bg-blue-100 hover:bg-blue-200">
+                                    <i data-feather="plus" class="w-4 h-4 mr-2"></i>Add Item
+                                </button>
+                                <button id="quickCreateSale" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-green-700 bg-green-100 hover:bg-green-200">
+                                    <i data-feather="shopping-cart" class="w-4 h-4 mr-2"></i>New Sale
+                                </button>
+                                <button id="quickCreatePurchase" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-purple-700 bg-purple-100 hover:bg-purple-200">
+                                    <i data-feather="truck" class="w-4 h-4 mr-2"></i>New Purchase
+                                </button>
+                                <button id="quickViewReports" class="inline-flex items-center justify-center px-4 py-2 border border-transparent text-sm font-medium rounded-md text-orange-700 bg-orange-100 hover:bg-orange-200">
+                                    <i data-feather="bar-chart-2" class="w-4 h-4 mr-2"></i>View Reports
+                                </button>
+                            </div>
+                        </div>
+
+                        <!-- Recent Activity -->
+                        <div class="bg-white shadow rounded-lg p-6">
+                            <h3 class="text-lg font-medium text-gray-900 mb-4">Recent Activity</h3>
+                            <div id="recentActivity" class="space-y-4">
+                                <!-- Recent activity will be populated by JavaScript -->
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Other tab contents will be populated by respective JavaScript modules -->
+                <div id="inventoryContent" class="tab-content hidden"></div>
+                <div id="salesContent" class="tab-content hidden"></div>
+                <div id="purchasesContent" class="tab-content hidden"></div>
+                <div id="payrollContent" class="tab-content hidden"></div>
+                <div id="reportsContent" class="tab-content hidden"></div>
+                <div id="usersContent" class="tab-content hidden"></div>
+            </main>
+        </div>
+    </div>
+
+    <!-- Modal Container -->
+    <div id="modalContainer"></div>
+
+    <!-- Scripts -->
+    <script src="auth.js"></script>
+    <script src="components.js"></script>
+    <script src="inventory.js"></script>
+    <script src="sales.js"></script>
+    <script src="purchases.js"></script>
+    <script src="payroll.js"></script>
+    <script src="reports.js"></script>
+    <script src="users.js"></script>
+    <script src="app.js"></script>
+</body>
+</html>
